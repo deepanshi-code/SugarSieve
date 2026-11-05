@@ -2,7 +2,9 @@
 
 *Screening works like a sieve: it filters out who needs the full test. SugarSieve checks how well quick measurements do that job.*
 
-> 🚧 **Work in progress.** Stages 1–4 are done: analysis, final evaluation and a working app. Live deployment and the final write-up are still to come.
+**🔗 Live app: [sugarsieve.streamlit.app](https://sugarsieve.streamlit.app/)**
+
+> Stages 1–4 are done: analysis, final evaluation, and a deployed app. A final write-up is still to come.
 
 ## The question
 Type 2 diabetes is confirmed with an **oral glucose tolerance test (OGTT)**: fasting, a glucose drink, a 2-hour wait and a blood draw.
@@ -42,7 +44,7 @@ Final evaluation on 154 held-out test patients ([notebook 03](notebooks/03_test_
 - [x] **Stage 2:** modelling with repeated CV: no-lab vs full models, baselines, selection, calibration, thresholds
 - [x] **Stage 3:** final test-set evaluation with confidence intervals, error and subgroup analysis
 - [x] **Stage 4:** Streamlit app (referral suggestion, risk band, explanation, limitations) and tests
-- [ ] Deploy to Streamlit Community Cloud (needs a GitHub repo, see below)
+- [x] Deployed to Streamlit Community Cloud: [sugarsieve.streamlit.app](https://sugarsieve.streamlit.app/)
 - [ ] **Stage 5:** write-up of results, limitations and what would be needed for real use
 
 ## Project structure
