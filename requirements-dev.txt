@@ -1,0 +1,4 @@
+-r requirements.txt
+matplotlib==3.10.7
+seaborn==0.13.2
+jupyterlab==4.4.7

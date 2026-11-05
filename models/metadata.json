@@ -1,0 +1,52 @@
+{
+  "sklearn_version": "1.8.0",
+  "python_version": "3.13.5",
+  "trained_on": "training split of src.data.train_test (seed 42), n=614",
+  "guideline_rule_referral_rate_train": 0.329,
+  "models": {
+    "no_lab": {
+      "file": "models/no_lab.joblib",
+      "features": [
+        "Pregnancies",
+        "BloodPressure",
+        "SkinThickness",
+        "BMI",
+        "DiabetesPedigree",
+        "Age"
+      ],
+      "config": "LogReg (median impute)",
+      "thresholds": {
+        "matched_rate": 0.4224,
+        "high_sensitivity": 0.2835
+      },
+      "cv_mean": {
+        "roc_auc": 0.7533,
+        "pr_auc": 0.6031,
+        "sens_at_rule_rate": 0.5194
+      }
+    },
+    "full": {
+      "file": "models/full.joblib",
+      "features": [
+        "Pregnancies",
+        "BloodPressure",
+        "SkinThickness",
+        "BMI",
+        "DiabetesPedigree",
+        "Age",
+        "Glucose",
+        "Insulin"
+      ],
+      "config": "LogReg (median impute)",
+      "thresholds": {
+        "matched_rate": 0.4183,
+        "high_sensitivity": 0.2497
+      },
+      "cv_mean": {
+        "roc_auc": 0.84,
+        "pr_auc": 0.7352,
+        "sens_at_rule_rate": 0.6463
+      }
+    }
+  }
+}
