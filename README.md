@@ -4,6 +4,9 @@
 
 **🔗 Live app: [sugarsieve.streamlit.app](https://sugarsieve.streamlit.app/)**
 
+![SugarSieve app: input form](docs/images/app_input.jpg)
+![SugarSieve app: result with explanation](docs/images/app_result.jpg)
+
 📄 **Full report:** [docs/report.md](docs/report.md): method, results with confidence intervals, limitations, and what real use would need.
 
 ## The question
@@ -35,7 +38,7 @@ Final evaluation on 154 held-out test patients ([notebook 03](notebooks/03_test_
 
 **Key findings**
 - **The simple guideline rule is hard to beat** with quick measurements alone. That's a negative result, consistent in cross-validation and on the test set.
-- **The age-gated rule never refers women under 35**, so it caught 0 of 16 young cases in the test set; the models caught 4–6 (exploratory, small numbers).
+- **Nearly half of all diabetes cases (126 of 268) are women under 35, whom the age-gated rule can never refer.** The models catch 34–52 % of them but fewer older cases. They catch *different* people, not more ([notebook 04](notebooks/04_age_subgroups.ipynb), exploratory).
 - **22 of 24 cases the full model missed had normal glucose at the exam**, which suggests later-onset diabetes that a single-visit model can't predict.
 - Plain **logistic regression** beat Random Forest and Gradient Boosting in cross-validation ([notebook 02](notebooks/02_modelling.ipynb)).
 
@@ -61,7 +64,8 @@ Final evaluation on 154 held-out test patients ([notebook 03](notebooks/03_test_
 └── notebooks/
     ├── 01_data_audit.ipynb
     ├── 02_modelling.ipynb
-    └── 03_test_evaluation.ipynb
+    ├── 03_test_evaluation.ipynb
+    └── 04_age_subgroups.ipynb    # exploratory follow-up
 ```
 
 ## How to run

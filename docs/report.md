@@ -13,8 +13,10 @@
   **5.6 points fewer** cases on the test set, with a 95 % CI of −14.3 to +6.0 points. In cross-validation it was a tie (+1.0 point).
 - **Secondary question, met:** when lab values are available, the full model ranks patients better than glucose alone
   (ROC-AUC **0.813 vs 0.765**, difference +0.048, 95 % CI **+0.004 to +0.095**). The margin is real but may be small.
-- **Most useful findings:** the age-gated rule **cannot refer anyone under 35**, so it caught **0 of 16** young cases in the test set.
-  Also, **22 of the 24 cases the full model missed had normal glucose** at the exam, which points to diabetes that developed later.
+- **Most useful finding:** **nearly half of all diabetes cases (126 of 268) are women under 35**, and the age-gated rule **cannot refer any of them**.
+  The models catch 34 % (quick measurements) to 52 % (with lab results) of these young cases. In exchange, they catch fewer older cases.
+  The rule and the models catch similar *numbers* of cases, but *different people* (exploratory analysis, [notebook 04](../notebooks/04_age_subgroups.ipynb)).
+- **22 of the 24 cases the full model missed had normal glucose** at the exam, which points to diabetes that developed later.
 - A simple model won. Logistic regression beat Random Forest and Gradient Boosting, and the information available (lab values or not)
   mattered far more than the choice of algorithm.
 
@@ -109,21 +111,32 @@ The thresholds chosen on training data transferred well: the standard thresholds
    What the model really offers is **choice**: a clinic can set the referral rate to match its testing capacity.
 2. **Information beats algorithms.** Adding glucose and insulin raised cross-validated ROC-AUC from 0.75 to 0.84. No modelling choice on the
    no-lab features gained more than about one point.
-3. **Who gets missed matters as much as how many.** The rule and the models caught similar *numbers* of cases, but *different people*:
+3. **Who gets missed matters as much as how many.** The rule and the models caught similar *numbers* of cases, but *different people*.
+   The test set had only 16 young cases, so [notebook 04](../notebooks/04_age_subgroups.ipynb) repeats the check on all 768 patients,
+   using out-of-fold predictions for the training set. It found the same pattern:
 
-   | Age group (test) | Cases | Rule catches | No-lab model | Full model |
-   |---|---|---|---|---|
-   | 21–29 | 16 | 0 % | 25 % | 38 % |
-   | 30–44 | 26 | 62 % | 50 % | 58 % |
-   | 45+ | 12 | 100 % | 92 % | 75 % |
+   | Diabetes cases | Rule catches | No-lab model | Full model |
+   |---|---|---|---|
+   | Under 35 (126 cases) | 0 % | 34 % (26–43 %) | 52 % (44–61 %) |
+   | 35 and over (142 cases) | 96 % (93–99 %) | 65 % (58–73 %) | 73 % (65–80 %) |
 
-   These groups are small and this check wasn't a pre-set criterion, so it is **exploratory**. Still, an age-gated rule structurally
-   cannot catch young patients, and a screening programme should know that.
+   (95 % bootstrap confidence intervals in brackets.)
+
+   - **Nearly half of all cases here are under 35.** The rule can't refer them at all, because it requires age ≥ 35.
+   - The models also refer **fewer older women without diabetes**. Among 30–44-year-olds without diabetes in training, the rule refers 50 %
+     and the full model 22 %. So the models **move** referrals from older patients without diabetes to younger patients with diabetes.
+   - This changes how the main result reads. The no-lab model didn't catch *more* cases, but it catches a group the rule can't reach.
+     Whether that trade-off is better is a clinical and policy decision, not a statistical one.
+   - *Caveats:* this analysis is **exploratory** and was added after the main evaluation. The rule's 0 % is true by construction. And this
+     population has unusually early-onset diabetes, so in other populations the share of young cases may be much smaller.
 4. **Some cases can't be caught from one visit.** The missed cases had a median 2-hour glucose of 122 mg/dL, against 155 for the cases
    that were caught, and 22 of the 24 were below 140 mg/dL. The label counts diabetes found at any later examination, so many of these women
    were probably diagnosed later. A negative screen is therefore not a clean bill of health.
 5. **Probabilities need care.** On average the models were well calibrated (predicted 0.35 vs actual 0.35), but they overestimated
    risk at the top end. That's why the app shows **risk bands** instead of precise percentages.
+6. **The app's explanations are exact for this model.** For a logistic regression, each bar in the app's "What drove this result" chart
+   (coefficient × standardised value) equals that feature's exact SHAP value in log-odds for the model's imputed, standardised inputs, measured against the average training patient. So no
+   separate explanation library is needed, and the explanation isn't an approximation.
 
 ## 7. Limitations
 
@@ -149,13 +162,15 @@ SugarSieve is a research prototype, **not a medical device**. To support real re
 5. **A fairness review** across age, sex and ethnicity before any deployment, given the age effect found here.
 6. **Regulatory assessment.** Software that influences clinical decisions may count as a medical device, depending on the jurisdiction.
 7. **Monitoring after deployment**, for drift in the patient mix and in calibration.
+8. **A deliberate referral policy for young patients.** Given the age finding, one option to test is a hybrid: *refer if the rule says yes,
+   or if the model's risk is high for a patient under 35*. It would need its own pre-set criteria and fresh data to be evaluated fairly.
 
 ## 9. Reproducing the results
 
 ```bash
 pip install -r requirements-dev.txt
 python -m unittest discover tests      # 11 tests
-jupyter lab                            # run notebooks 01 → 02 → 03 in order
+jupyter lab                            # run notebooks 01 → 02 → 03 → 04 in order
 streamlit run app.py
 ```
 

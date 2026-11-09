@@ -141,8 +141,9 @@ with tab_assess:
             names = ", ".join(LABELS[c] for c in result["missing"])
             notes.append(f"**Not measured:** {names}. A typical value was used, so the result is less certain.")
         if age < 35 and not result["refer"]:
-            notes.append("**Younger patient:** in testing, most diabetes cases in women under 30 were missed, by both the "
-                         "guideline rule and the models. Don't rely on a low result alone; consider other risk factors.")
+            notes.append("**Younger patient:** the guideline rule never refers anyone under 35, and in testing these models "
+                         "caught only about a third (quick measurements) to a half (with lab results) of diabetes cases in women "
+                         "under 35. Don't rely on a low result alone; consider other risk factors.")
         if not result["refer"]:
             notes.append("**A negative result is not a clean bill of health.** Most cases the models missed had normal "
                          "glucose at the time and were probably diagnosed later. Repeat screening still matters.")
@@ -165,7 +166,8 @@ with tab_about:
     st.markdown(
         "- **Quick measurements alone don't beat the simple guideline rule.** What the model adds is a choice of threshold, "
         "not higher accuracy.\n"
-        "- The guideline rule never refers women under 35, so it caught **0 of 16** young cases in the test set; the models caught 4–6.\n"
+        "- **Nearly half of all diabetes cases in this data (126 of 268) are in women under 35**, whom the guideline rule can never "
+        "refer. The models catch 34–52 % of them, but fewer older cases than the rule. They catch *different* people, not more people.\n"
         "- **Lab results help most when the goal is to miss few cases:** at a similar referral rate, 7 vs 13 missed cases.")
 
     st.subheader("Limitations")

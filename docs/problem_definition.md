@@ -54,3 +54,4 @@ Evaluated with **repeated stratified cross-validation** on the training data, th
 | 2026-11-03 | Initial version | — |
 | 2026-11-03 | Results recorded (notebook 03). **Criteria unchanged.** Q1 not met, Q2 met. | Test set evaluated once with the saved models |
 | 2026-11-03 | Added an exploratory age-subgroup check. It is not a success criterion. | Safety and fairness check for the app |
+| 2026-11-09 | Notebook 04: the age-subgroup check repeated on all 768 patients with CIs. **Criteria and models unchanged.** | Test set had only 16 young cases |
