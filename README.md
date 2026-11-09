@@ -1,5 +1,7 @@
 # SugarSieve: who should get a glucose test?
 
+[![tests](https://github.com/deepanshi-code/SugarSieve/actions/workflows/tests.yml/badge.svg)](https://github.com/deepanshi-code/SugarSieve/actions/workflows/tests.yml)
+
 *Screening works like a sieve: it filters out who needs the full test. SugarSieve checks how well quick measurements do that job.*
 
 **🔗 Live app: [sugarsieve.streamlit.app](https://sugarsieve.streamlit.app/)**
@@ -7,7 +9,7 @@
 ![SugarSieve app: input form](docs/images/app_input.jpg)
 ![SugarSieve app: result with explanation](docs/images/app_result.jpg)
 
-📄 **Full report:** [docs/report.md](docs/report.md): method, results with confidence intervals, limitations, and what real use would need.
+📄 **[Full report](docs/report.md)** · 🧾 **[Model card](docs/model_card.md)** · 🌍 **[External validation on 5,298 US women](notebooks/05_external_validation.ipynb)**
 
 ## The question
 Type 2 diabetes is confirmed with an **oral glucose tolerance test (OGTT)**: fasting, a glucose drink, a 2-hour wait and a blood draw.
@@ -20,7 +22,9 @@ It is too costly to give everyone. This project asks:
 Full problem statement, baselines and success criteria (fixed before modelling): [docs/problem_definition.md](docs/problem_definition.md)
 
 ## Data
-[Pima Indians Diabetes Database](https://www.openml.org/d/37) (NIDDK): 768 women aged 21+ of Pima heritage, Arizona, USA.
+- **Development:** [Pima Indians Diabetes Database](https://www.openml.org/d/37) (NIDDK): 768 women aged 21+ of Pima heritage, Arizona, USA.
+- **External validation:** [NHANES](https://wwwn.cdc.gov/nchs/nhanes/) 2005–2016 (CDC/NCHS, public domain): 5,298 US women aged 21+ without
+  diagnosed diabetes and with a completed glucose tolerance test. Built by `python -m src.nhanes`.
 
 Key findings from the [data audit](notebooks/01_data_audit.ipynb):
 - The documentation says there are no missing values, but **zeros are used for missing values**. About **48 %** of rows have at least one impossible zero (e.g. insulin = 0).
@@ -28,17 +32,22 @@ Key findings from the [data audit](notebooks/01_data_audit.ipynb):
 - The guideline rule (*Age ≥ 35 and BMI ≥ 25*) refers about 1 in 3 patients but catches only about **half** of the diabetes cases.
 
 ## Results
-Final evaluation on 154 held-out test patients ([notebook 03](notebooks/03_test_evaluation.ipynb)), judged against criteria fixed before modelling:
+Judged against criteria fixed before seeing any results: on the held-out Pima test set ([notebook 03](notebooks/03_test_evaluation.ipynb)),
+and on an independent NHANES population with a plan committed before outcomes were examined ([notebook 05](notebooks/05_external_validation.ipynb)).
 
-| Question | Test result (95 % bootstrap CI) | Verdict |
+| Question | Pima test (154 women) | NHANES external (5,298 women) |
 |---|---|---|
-| No-lab model vs guideline rule (cases caught at the same referral rate) | −5.6 points (−14.3 to +6.0) | ❌ Not met: no evidence the model beats the rule |
-| Full model vs glucose alone (ROC-AUC) | 0.81 vs 0.77: +0.048 (+0.004 to +0.095) | ✅ Met, with a modest margin |
-| Value of lab values | ROC-AUC 0.73 → 0.81; at ~53–55 % referral, 13 → 7 missed cases | Helps most when the goal is to miss few cases |
+| No-lab model vs guideline rule (cases caught at the same referral rate) | −5.6 points (−14.3 to +6.0) ❌ | **+6.9 points (+3.2 to +10.9) ✅** |
+| No-lab model ROC-AUC | 0.730 | **0.739** (0.718–0.760) |
+| Full model vs glucose alone (ROC-AUC) | +0.048 (+0.004 to +0.095) ✅ | **+0.027 (+0.008 to +0.047) ✅** |
+| Calibration (mean predicted vs actual rate) | 0.35 vs 0.35 | 0.33 vs 0.085 ❌, fixed by recalibration |
 
 **Key findings**
-- **The simple guideline rule is hard to beat** with quick measurements alone. That's a negative result, consistent in cross-validation and on the test set.
-- **Nearly half of all diabetes cases (126 of 268) are women under 35, whom the age-gated rule can never refer.** The models catch 34–52 % of them but fewer older cases. They catch *different* people, not more ([notebook 04](notebooks/04_age_subgroups.ipynb), exploratory).
+- **The model's ranking transfers to a new population; its probabilities don't.** ROC-AUC barely moved from Pima to NHANES, but predicted
+  risks were about 4× too high until a single intercept recalibration (Brier score halved).
+- **Against the guideline rule:** a tie in the small Pima test, and a modest, clear win in the large NHANES sample. The Pima interval included the NHANES effect.
+- **The age story depends on the population.** In Pima nearly half of all cases are under 35, whom the age-gated rule can never refer
+  ([notebook 04](notebooks/04_age_subgroups.ipynb)). In NHANES only 4 % are, and the model beat the rule in both age groups.
 - **22 of 24 cases the full model missed had normal glucose at the exam**, which suggests later-onset diabetes that a single-visit model can't predict.
 - Plain **logistic regression** beat Random Forest and Gradient Boosting in cross-validation ([notebook 02](notebooks/02_modelling.ipynb)).
 
@@ -49,23 +58,29 @@ Final evaluation on 154 held-out test patients ([notebook 03](notebooks/03_test_
 - [x] **Stage 4:** Streamlit app (referral suggestion, risk band, explanation, limitations) and tests
 - [x] Deployed to Streamlit Community Cloud: [sugarsieve.streamlit.app](https://sugarsieve.streamlit.app/)
 - [x] **Stage 5:** [final report](docs/report.md): results, limitations, and what real use would need
+- [x] **External validation** on NHANES with a pre-registered plan, a [model card](docs/model_card.md), and automated tests on GitHub
 
 ## Project structure
 ```
 ├── docs/problem_definition.md   # problem, user, baselines, success criteria
 ├── docs/report.md               # final report
+├── docs/model_card.md           # intended use, data, performance, limits
+├── docs/external_validation_plan.md   # written before NHANES outcomes were examined
 ├── data/raw/pima_diabetes.csv   # unchanged copy from OpenML
+├── data/external/nhanes_validation.csv  # processed NHANES validation set
 ├── src/data.py                  # loading, zero→missing cleaning, fixed train/test split
 ├── src/models.py                # pipelines, guideline-rule baseline, screening metric
 ├── src/predict.py               # prediction logic used by the app (testable without the UI)
+├── src/nhanes.py                # downloads NHANES and builds the validation set
 ├── app.py                       # Streamlit app
-├── tests/test_predict.py        # unit tests
+├── tests/                       # unit tests (run automatically by GitHub Actions)
 ├── models/                      # saved models + metadata.json (features, thresholds, CV scores)
 └── notebooks/
     ├── 01_data_audit.ipynb
     ├── 02_modelling.ipynb
     ├── 03_test_evaluation.ipynb
-    └── 04_age_subgroups.ipynb    # exploratory follow-up
+    ├── 04_age_subgroups.ipynb    # exploratory follow-up
+    └── 05_external_validation.ipynb
 ```
 
 ## How to run
@@ -77,7 +92,8 @@ pip install -r requirements-dev.txt   # app + notebooks (requirements.txt = app 
 streamlit run app.py                  # the app
 python -m unittest discover tests     # the tests
 jupyter lab                           # the notebooks
-python -m src.data                    # optional: re-download the raw data
+python -m src.data                    # optional: re-download the Pima data
+python -m src.nhanes                  # optional: download NHANES (~116 MB) and rebuild the validation set
 ```
 
 ## The app
@@ -97,5 +113,5 @@ about 1 in 3 patients, and a *catch more cases* threshold, which refers about 1 
 4. Deploy. The app gets a public `*.streamlit.app` URL.
 
 ## Limitations
-The data covers one community of women from the 1980s. Any model built here is a **learning and research exercise, not a medical device**,
-and it would need validation on other populations before real use.
+The models were trained on one community of women from the 1980s and validated on US women from 2005–2016. Men and other countries are
+untested, and the probabilities need recalibrating for any new population. This is a **learning and research project, not a medical device**.

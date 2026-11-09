@@ -75,3 +75,4 @@ Compare ROC-AUC of the full model vs glucose alone, using a paired bootstrap CI.
 | Date | Change | Reason |
 |---|---|---|
 | 2026-11-09 | Plan written before outcomes were examined | — |
+| 2026-11-09 | Implementation note, not a plan change: NHANES SAS files store 0 as a tiny float (~5e-79), so blood-pressure readings below 1 are treated as the planned "0 = missing". Found before outcomes were examined. | Data format detail |
