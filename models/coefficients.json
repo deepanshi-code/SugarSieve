@@ -1,0 +1,109 @@
+{
+  "note": "Logistic regression: p = 1 / (1 + exp(-(intercept + sum(coef * (x - mean) / scale)))), with missing x replaced by the median.",
+  "models": {
+    "no_lab": {
+      "features": [
+        "Pregnancies",
+        "BloodPressure",
+        "SkinThickness",
+        "BMI",
+        "DiabetesPedigree",
+        "Age"
+      ],
+      "medians": {
+        "Pregnancies": 3.0,
+        "BloodPressure": 72.0,
+        "SkinThickness": 29.0,
+        "BMI": 32.4,
+        "DiabetesPedigree": 0.3825,
+        "Age": 29.0
+      },
+      "means": {
+        "Pregnancies": 3.819218,
+        "BloodPressure": 72.140065,
+        "SkinThickness": 29.042345,
+        "BMI": 32.448208,
+        "DiabetesPedigree": 0.477428,
+        "Age": 33.36645
+      },
+      "scales": {
+        "Pregnancies": 3.311448,
+        "BloodPressure": 12.265119,
+        "SkinThickness": 8.884611,
+        "BMI": 6.818562,
+        "DiabetesPedigree": 0.330031,
+        "Age": 11.823798
+      },
+      "coefficients": {
+        "Pregnancies": 0.299958,
+        "BloodPressure": 0.068283,
+        "SkinThickness": 0.10847,
+        "BMI": 0.694921,
+        "DiabetesPedigree": 0.279319,
+        "Age": 0.368754
+      },
+      "intercept": -0.762786,
+      "thresholds": {
+        "matched_rate": 0.4224,
+        "high_sensitivity": 0.2835
+      }
+    },
+    "full": {
+      "features": [
+        "Pregnancies",
+        "BloodPressure",
+        "SkinThickness",
+        "BMI",
+        "DiabetesPedigree",
+        "Age",
+        "Glucose",
+        "Insulin"
+      ],
+      "medians": {
+        "Pregnancies": 3.0,
+        "BloodPressure": 72.0,
+        "SkinThickness": 29.0,
+        "BMI": 32.4,
+        "DiabetesPedigree": 0.3825,
+        "Age": 29.0,
+        "Glucose": 117.0,
+        "Insulin": 125.0
+      },
+      "means": {
+        "Pregnancies": 3.819218,
+        "BloodPressure": 72.140065,
+        "SkinThickness": 29.042345,
+        "BMI": 32.448208,
+        "DiabetesPedigree": 0.477428,
+        "Age": 33.36645,
+        "Glucose": 121.67101,
+        "Insulin": 137.705212
+      },
+      "scales": {
+        "Pregnancies": 3.311448,
+        "BloodPressure": 12.265119,
+        "SkinThickness": 8.884611,
+        "BMI": 6.818562,
+        "DiabetesPedigree": 0.330031,
+        "Age": 11.823798,
+        "Glucose": 29.979351,
+        "Insulin": 78.7006
+      },
+      "coefficients": {
+        "Pregnancies": 0.377446,
+        "BloodPressure": -0.044111,
+        "SkinThickness": 0.028321,
+        "BMI": 0.688652,
+        "DiabetesPedigree": 0.233337,
+        "Age": 0.147794,
+        "Glucose": 1.182567,
+        "Insulin": -0.066119
+      },
+      "intercept": -0.872175,
+      "thresholds": {
+        "matched_rate": 0.4183,
+        "high_sensitivity": 0.2497
+      }
+    }
+  }
+}

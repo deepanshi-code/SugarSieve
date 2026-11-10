@@ -46,6 +46,7 @@ and on an independent NHANES population with a plan committed before outcomes we
 - **The model's ranking transfers to a new population; its probabilities don't.** ROC-AUC barely moved from Pima to NHANES, but predicted
   risks were about 4× too high until a single intercept recalibration (Brier score halved).
 - **Against the guideline rule:** a tie in the small Pima test, and a modest, clear win in the large NHANES sample. The Pima interval included the NHANES effect.
+  With the guideline's official 35–70 age range, the NHANES advantage grows to +20 points, so the primary comparison was conservative ([notebook 06](notebooks/06_rule_age_limit.ipynb)).
 - **The age story depends on the population.** In Pima nearly half of all cases are under 35, whom the age-gated rule can never refer
   ([notebook 04](notebooks/04_age_subgroups.ipynb)). In NHANES only 4 % are, and the model beat the rule in both age groups.
 - **22 of 24 cases the full model missed had normal glucose at the exam**, which suggests later-onset diabetes that a single-visit model can't predict.
@@ -72,15 +73,17 @@ and on an independent NHANES population with a plan committed before outcomes we
 ├── src/models.py                # pipelines, guideline-rule baseline, screening metric
 ├── src/predict.py               # prediction logic used by the app (testable without the UI)
 ├── src/nhanes.py                # downloads NHANES and builds the validation set
+├── src/export.py                # exports the models as plain numbers + a numpy-only predictor
 ├── app.py                       # Streamlit app
 ├── tests/                       # unit tests (run automatically by GitHub Actions)
-├── models/                      # saved models + metadata.json (features, thresholds, CV scores)
+├── models/                      # saved models, metadata.json, and coefficients.json (version-independent copy)
 └── notebooks/
     ├── 01_data_audit.ipynb
     ├── 02_modelling.ipynb
     ├── 03_test_evaluation.ipynb
     ├── 04_age_subgroups.ipynb    # exploratory follow-up
-    └── 05_external_validation.ipynb
+    ├── 05_external_validation.ipynb
+    └── 06_rule_age_limit.ipynb   # sensitivity check: guideline rule capped at age 70
 ```
 
 ## How to run

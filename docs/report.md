@@ -176,6 +176,11 @@ used unchanged. Full details are in [notebook 05](../notebooks/05_external_valid
    ROC-AUC from 0.739 to 0.741.
 6. **The saved thresholds don't keep their meaning.** In NHANES the standard threshold referred 29 % (not 33 %) and caught 60 % of cases.
    The thresholds need to be re-chosen for each population, along with the recalibration.
+7. **The primary baseline was the tougher one.** USPSTF 2021 covers ages 35–70, but the primary rule had no upper age limit.
+   [Notebook 06](../notebooks/06_rule_age_limit.ipynb) re-runs the comparison with the 35–70 range. In NHANES, 147 of the 451 cases (33 %)
+   are women over 70, so the capped rule catches only 55 % of cases, and the model's advantage grows to **+20 points (95 % CI +14 to +26)**.
+   Pima's test set has no one over 70, so nothing changes there. The primary comparison was therefore conservative. (This is a sensitivity
+   check added after the main results.)
 
 **Limitations of this validation:** survey weights weren't used, so the results describe these sampled women, not the US population. The
 outcome is current undiagnosed diabetes, while Pima's also included later onset. Women only. And the full model can't be judged fairly with
@@ -189,7 +194,8 @@ its saved thresholds here, because glucose ≥ 200 defines part of the outcome.
   US women, but **men, other countries and today's clinical practice remain untested**.
 - **Different labels.** Pima's outcome includes later-onset diabetes, while NHANES uses current undiagnosed diabetes.
 - **A simplified baseline.** The rule "age ≥ 35 and BMI ≥ 25" is a simplified form of published screening guidance (based on USPSTF 2021).
-  Check the current guideline before relying on this comparison.
+  Adding the guideline's upper age limit of 70 only makes the rule weaker (notebook 06). A stronger comparison would use an established
+  risk questionnaire such as the ADA risk test. Check the current guideline before relying on this comparison.
 - **Heavily studied data.** The Pima dataset is widely used, so similar studies on it aren't independent evidence. The NHANES validation is.
 
 ## 9. What real use would require
@@ -211,9 +217,10 @@ SugarSieve is a research prototype, **not a medical device**. To support real re
 
 ```bash
 pip install -r requirements-dev.txt
-python -m unittest discover tests      # 16 tests (also run automatically on GitHub)
+python -m unittest discover tests      # 24 tests (also run automatically on GitHub)
 python -m src.nhanes                   # download NHANES (~116 MB) and rebuild data/external/nhanes_validation.csv
-jupyter lab                            # run notebooks 01 → 05 in order
+jupyter lab                            # run notebooks 01 → 06 in order
+python -m src.export                   # re-export models/coefficients.json from the saved models
 streamlit run app.py
 ```
 

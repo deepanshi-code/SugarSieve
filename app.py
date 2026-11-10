@@ -121,12 +121,13 @@ with tab_assess:
         contrib = result["contributions"].rename(index=LABELS).reset_index()
         contrib.columns = ["factor", "effect"]
         contrib["direction"] = contrib["effect"].map(lambda e: "raises risk" if e > 0 else "lowers risk")
+        # Okabe-Ito orange/blue: distinguishable with red-green colour blindness (unlike red/green)
         chart = (alt.Chart(contrib)
                  .mark_bar()
                  .encode(x=alt.X("effect:Q", title="Effect compared with an average patient (log-odds)"),
                          y=alt.Y("factor:N", sort="-x", title=None),
                          color=alt.Color("direction:N", scale=alt.Scale(domain=["raises risk", "lowers risk"],
-                                                                         range=["#d62728", "#2ca02c"]), title=None),
+                                                                         range=["#D55E00", "#0072B2"]), title=None),
                          tooltip=["factor", alt.Tooltip("effect:Q", format=".2f")])
                  .properties(height=36 * len(contrib)))
         st.altair_chart(chart, width="stretch")

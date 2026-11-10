@@ -12,6 +12,7 @@ Details are in the [report](report.md).
 | Output | Probability of diabetes, turned into a referral by a fixed threshold | Same |
 | Thresholds | Standard 0.422 (refers ~1 in 3); catch-more 0.283 (refers ~1 in 2) | Standard 0.418; catch-more 0.250 |
 | Library | scikit-learn 1.8.0, Python 3.13 | Same |
+| Portable copy | `models/coefficients.json`: every number needed to compute predictions without scikit-learn (`src/export.py`) | Same |
 
 Coefficients (log-odds per 1 standard deviation): no-lab model: BMI 0.69, age 0.37, pregnancies 0.30, pedigree 0.28, skinfold 0.11,
 blood pressure 0.07. Full model: glucose 1.18, BMI 0.69, pregnancies 0.38, pedigree 0.23, age 0.15, skinfold 0.03, blood pressure −0.04, insulin −0.07.

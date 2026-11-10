@@ -20,14 +20,24 @@ RANDOM_STATE = 42
 
 # ---------------------------------------------------------------- baselines
 class GuidelineRule(BaseEstimator, ClassifierMixin):
-    """Refer if Age >= 35 and BMI >= 25 (based on USPSTF 2021 screening criteria). Learns nothing."""
+    """Refer if Age >= 35 and BMI >= 25 (based on USPSTF 2021 screening criteria). Learns nothing.
+
+    The primary analyses use no upper age limit. USPSTF 2021 covers ages 35-70, so max_age=70 is
+    available as a sensitivity check (notebook 06).
+    """
+
+    def __init__(self, max_age=None):
+        self.max_age = max_age
 
     def fit(self, X, y):
         self.classes_ = np.array([0, 1])
         return self
 
     def predict(self, X):
-        return ((X["Age"] >= 35) & (X["BMI"] >= 25)).astype(int).to_numpy()
+        refer = (X["Age"] >= 35) & (X["BMI"] >= 25)
+        if self.max_age is not None:
+            refer &= X["Age"] <= self.max_age
+        return refer.astype(int).to_numpy()
 
     def predict_proba(self, X):
         p = self.predict(X).astype(float)
