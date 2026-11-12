@@ -69,7 +69,9 @@ priority groups. Training uses 2007–2014, testing uses 2015–2018. Plan writt
 - [x] **Stage 2:** data pipeline and [audit](notebooks/10_part2_data_audit.ipynb): 22,426 training adults (2007–2014) and 10,614 test adults
   (2015–2018). Undiagnosed diabetes doubles the rate of kidney markers (30 % vs 12.5 %), and hypertension triples both.
   The official baselines are strong: the CDC/ADA score catches 82 % of undiagnosed diabetes in the training years.
-- [ ] **Stage 3:** modelling (training years only)
+- [x] **Stage 3:** [modelling](notebooks/11_part2_modelling.ipynb) on 2007–2014 only, with cluster-aware cross-validation. Diabetes (logistic
+  regression): 83.6 % of cases caught vs the CDC/ADA score's 82.2 %, a small edge. Kidney (gradient boosting): 81.6 % vs KDIGO's 77.8 %,
+  better in every fold. Predicted diabetes risk adds nothing to the kidney model, because it's built from the same inputs.
 - [ ] **Stage 4:** temporal test, interconnection and fairness analyses
 - [ ] **Stage 5:** app update and report
 
@@ -88,9 +90,11 @@ priority groups. Training uses 2007–2014, testing uses 2015–2018. Plan writt
 ├── src/nhanes.py                # downloads NHANES and builds the validation set
 ├── src/export.py                # exports the models as plain numbers + a numpy-only predictor
 ├── src/part2_data.py            # Part 2: NHANES 2007–2018 inputs, targets (eGFR, ACR, HbA1c), CDC/ADA and KDIGO baselines
+├── src/part2_models.py          # Part 2: cluster-aware CV, leak-free diabetes→kidney chain, fold metrics
 ├── app.py                       # Streamlit app
 ├── tests/                       # unit tests (run automatically by GitHub Actions)
 ├── models/                      # saved models, metadata.json, and coefficients.json (version-independent copy)
+│   └── part2/                   # Part 2 diabetes and kidney models + metadata.json
 └── notebooks/
     ├── 01_data_audit.ipynb
     ├── 02_modelling.ipynb
@@ -98,7 +102,8 @@ priority groups. Training uses 2007–2014, testing uses 2015–2018. Plan writt
     ├── 04_age_subgroups.ipynb    # exploratory follow-up
     ├── 05_external_validation.ipynb
     ├── 06_rule_age_limit.ipynb   # sensitivity check: guideline rule capped at age 70
-    └── 10_part2_data_audit.ipynb # Part 2 starts at notebook 10
+    ├── 10_part2_data_audit.ipynb # Part 2 starts at notebook 10
+    └── 11_part2_modelling.ipynb
 ```
 
 ## How to run

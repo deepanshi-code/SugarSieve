@@ -1,0 +1,74 @@
+{
+  "sklearn_version": "1.8.0",
+  "python_version": "3.13.5",
+  "trained_on": "NHANES 2007-2014 (src.part2_data, split == 'train')",
+  "models": {
+    "diabetes": {
+      "file": "models/part2/diabetes.joblib",
+      "config": "Logistic regression",
+      "features": [
+        "Age",
+        "Male",
+        "BMI",
+        "Waist",
+        "SBP",
+        "DBP",
+        "ToldHighBP",
+        "BPMeds",
+        "FamilyHistoryDiabetes",
+        "GestationalDiabetes",
+        "CurrentSmoker",
+        "PhysicallyActive",
+        "CVD"
+      ],
+      "uses_diabetes_model": false,
+      "target": "UndxDiabetes",
+      "baseline": "CDCHighRisk",
+      "thresholds": {
+        "matched_rate": 0.02983,
+        "high_sensitivity": 0.03366
+      },
+      "cv_mean": {
+        "roc_auc": 0.7933,
+        "pr_auc": 0.1327,
+        "sens_at_rule_rate": 0.836,
+        "rule_sens": 0.8221,
+        "rule_roc_auc": 0.7739
+      }
+    },
+    "ckd": {
+      "file": "models/part2/ckd.joblib",
+      "config": "Gradient boosting",
+      "features": [
+        "Age",
+        "Male",
+        "BMI",
+        "Waist",
+        "SBP",
+        "DBP",
+        "ToldHighBP",
+        "BPMeds",
+        "FamilyHistoryDiabetes",
+        "GestationalDiabetes",
+        "CurrentSmoker",
+        "PhysicallyActive",
+        "CVD",
+        "DiagnosedDiabetes"
+      ],
+      "uses_diabetes_model": false,
+      "target": "UndxCKD",
+      "baseline": "KDIGOPriority",
+      "thresholds": {
+        "matched_rate": 0.09953,
+        "high_sensitivity": 0.10655
+      },
+      "cv_mean": {
+        "roc_auc": 0.8017,
+        "pr_auc": 0.5043,
+        "sens_at_rule_rate": 0.8157,
+        "rule_sens": 0.7777,
+        "rule_roc_auc": 0.6907
+      }
+    }
+  }
+}
