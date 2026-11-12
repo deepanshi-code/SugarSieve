@@ -72,7 +72,17 @@ priority groups. Training uses 2007–2014, testing uses 2015–2018. Plan writt
 - [x] **Stage 3:** [modelling](notebooks/11_part2_modelling.ipynb) on 2007–2014 only, with cluster-aware cross-validation. Diabetes (logistic
   regression): 83.6 % of cases caught vs the CDC/ADA score's 82.2 %, a small edge. Kidney (gradient boosting): 81.6 % vs KDIGO's 77.8 %,
   better in every fold. Predicted diabetes risk adds nothing to the kidney model, because it's built from the same inputs.
-- [ ] **Stage 4:** temporal test, interconnection and fairness analyses
+- [x] **Stage 4:** [one-time test on 2015–2018](notebooks/12_part2_test_evaluation.ipynb), judged against the pre-registered criteria:
+
+  | Question | Result (95 % CI) | Verdict |
+  |---|---|---|
+  | Diabetes model vs CDC/ADA questionnaire (cases caught at its referral rate) | −0.3 points (−4.2 to +3.6) | ❌ Not met: the official questionnaire is as good |
+  | Kidney model vs KDIGO priority groups | **+2.5 points (+1.0 to +4.0)**; ROC-AUC 0.79 vs 0.68 | ✅ Met |
+  | Predicted diabetes risk improves the kidney model | +0.0002 ROC-AUC | ❌ No: same inputs, no new information |
+  | Actual HbA1c result improves the kidney model (exploratory) | +0.016 ROC-AUC (+0.012 to +0.020) | ✅ Real test results carry the connection |
+
+  **Fairness finding:** the race-blind diabetes model underestimates risk for Asian American adults (2.1 % predicted vs 5.1 % observed) and catches
+  fewer of their cases than the CDC/ADA score, which uses lower BMI cut-offs for them.
 - [ ] **Stage 5:** app update and report
 
 ## Project structure
@@ -91,6 +101,7 @@ priority groups. Training uses 2007–2014, testing uses 2015–2018. Plan writt
 ├── src/export.py                # exports the models as plain numbers + a numpy-only predictor
 ├── src/part2_data.py            # Part 2: NHANES 2007–2018 inputs, targets (eGFR, ACR, HbA1c), CDC/ADA and KDIGO baselines
 ├── src/part2_models.py          # Part 2: cluster-aware CV, leak-free diabetes→kidney chain, fold metrics
+├── src/part2_eval.py            # Part 2: survey-design (Rao–Wu) bootstrap for confidence intervals
 ├── app.py                       # Streamlit app
 ├── tests/                       # unit tests (run automatically by GitHub Actions)
 ├── models/                      # saved models, metadata.json, and coefficients.json (version-independent copy)
@@ -103,7 +114,8 @@ priority groups. Training uses 2007–2014, testing uses 2015–2018. Plan writt
     ├── 05_external_validation.ipynb
     ├── 06_rule_age_limit.ipynb   # sensitivity check: guideline rule capped at age 70
     ├── 10_part2_data_audit.ipynb # Part 2 starts at notebook 10
-    └── 11_part2_modelling.ipynb
+    ├── 11_part2_modelling.ipynb
+    └── 12_part2_test_evaluation.ipynb
 ```
 
 ## How to run
