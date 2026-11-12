@@ -118,3 +118,11 @@ about 1 in 3 patients, and a *catch more cases* threshold, which refers about 1 
 ## Limitations
 The models were trained on one community of women from the 1980s and validated on US women from 2005–2016. Men and other countries are
 untested, and the probabilities need recalibrating for any new population. This is a **learning and research project, not a medical device**.
+
+## License
+- **Code** (everything except `data/`): [MIT License](LICENSE) © 2026 Deepanshi Agarwal.
+- **Data** keeps its original terms and is not covered by the MIT License:
+  - `data/raw/pima_diabetes.csv`: Pima Indians Diabetes Database (National Institute of Diabetes and Digestive and Kidney Diseases),
+    obtained via [OpenML #37](https://www.openml.org/d/37) from the UCI Machine Learning Repository. See the source pages for terms and citation.
+  - `data/external/nhanes_validation.csv`: derived from [NHANES](https://wwwn.cdc.gov/nchs/nhanes/) 2005–2016, Centers for Disease Control
+    and Prevention, National Center for Health Statistics (public domain).
