@@ -66,7 +66,9 @@ Extends the project from diabetes alone to **diabetes, high blood pressure and c
 routine visit, who needs an HbA1c test, and who needs a kidney panel?* Baselines are the official CDC/ADA risk test and the KDIGO 2024
 priority groups. Training uses 2007–2014, testing uses 2015–2018. Plan written before results: [docs/part2_plan.md](docs/part2_plan.md).
 - [x] **Stage 1:** problem definition, verified baselines and formulas, pre-registered plan
-- [ ] **Stage 2:** data pipeline and audit
+- [x] **Stage 2:** data pipeline and [audit](notebooks/10_part2_data_audit.ipynb): 22,426 training adults (2007–2014) and 10,614 test adults
+  (2015–2018). Undiagnosed diabetes doubles the rate of kidney markers (30 % vs 12.5 %), and hypertension triples both.
+  The official baselines are strong: the CDC/ADA score catches 82 % of undiagnosed diabetes in the training years.
 - [ ] **Stage 3:** modelling (training years only)
 - [ ] **Stage 4:** temporal test, interconnection and fairness analyses
 - [ ] **Stage 5:** app update and report
@@ -78,12 +80,14 @@ priority groups. Training uses 2007–2014, testing uses 2015–2018. Plan writt
 ├── docs/model_card.md           # intended use, data, performance, limits
 ├── docs/external_validation_plan.md   # written before NHANES outcomes were examined
 ├── data/raw/pima_diabetes.csv   # unchanged copy from OpenML
-├── data/external/nhanes_validation.csv  # processed NHANES validation set
+├── data/external/nhanes_validation.csv  # processed NHANES validation set (Part 1)
+├── data/external/part2_nhanes.csv.gz    # processed Part 2 dataset
 ├── src/data.py                  # loading, zero→missing cleaning, fixed train/test split
 ├── src/models.py                # pipelines, guideline-rule baseline, screening metric
 ├── src/predict.py               # prediction logic used by the app (testable without the UI)
 ├── src/nhanes.py                # downloads NHANES and builds the validation set
 ├── src/export.py                # exports the models as plain numbers + a numpy-only predictor
+├── src/part2_data.py            # Part 2: NHANES 2007–2018 inputs, targets (eGFR, ACR, HbA1c), CDC/ADA and KDIGO baselines
 ├── app.py                       # Streamlit app
 ├── tests/                       # unit tests (run automatically by GitHub Actions)
 ├── models/                      # saved models, metadata.json, and coefficients.json (version-independent copy)
@@ -93,7 +97,8 @@ priority groups. Training uses 2007–2014, testing uses 2015–2018. Plan writt
     ├── 03_test_evaluation.ipynb
     ├── 04_age_subgroups.ipynb    # exploratory follow-up
     ├── 05_external_validation.ipynb
-    └── 06_rule_age_limit.ipynb   # sensitivity check: guideline rule capped at age 70
+    ├── 06_rule_age_limit.ipynb   # sensitivity check: guideline rule capped at age 70
+    └── 10_part2_data_audit.ipynb # Part 2 starts at notebook 10
 ```
 
 ## How to run
@@ -107,6 +112,7 @@ python -m unittest discover tests     # the tests
 jupyter lab                           # the notebooks
 python -m src.data                    # optional: re-download the Pima data
 python -m src.nhanes                  # optional: download NHANES (~116 MB) and rebuild the validation set
+python -m src.part2_data              # optional: download Part 2 NHANES files and rebuild the Part 2 dataset
 ```
 
 ## The app

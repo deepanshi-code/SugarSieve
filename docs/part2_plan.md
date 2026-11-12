@@ -106,3 +106,5 @@ The primary analysis is unweighted. Key results are repeated with NHANES examina
 | Date | Change | Reason |
 |---|---|---|
 | 2026-11-12 | Plan written before Part 2 outcomes were examined | — |
+| 2026-11-12 | Implementation details, fixed **before** outcomes were examined: (1) in the CDC/ADA score, a missing answer scores 0 points for that item; (2) women who were never pregnant (`RHQ131` = 2) and all men have gestational diabetes = 0, while women with no reproductive-health record (~12 %) or a "borderline" answer stay missing; (3) BP medication = 0 when not told of high BP or not prescribed medication; (4) the CKD target is positive if any available kidney marker is abnormal, and negative only when both were measured and normal | Choices the plan didn't specify |
+| 2026-11-12 | **Added sensitivity analysis:** repeat P2 and the kidney ROC-AUC with an eGFR < 60-only target. Decided from the **training-year** audit (60 % of kidney cases are raised albumin only, on a single test). Test-year outcomes not yet examined. | A single albumin test overstates CKD |
