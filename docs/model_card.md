@@ -64,3 +64,37 @@ exact SHAP value in log-odds, relative to the average training patient.
 ## Ethical considerations
 - The data is public and de-identified. The app stores nothing.
 - Age is used as a predictor. That improves risk estimates, but it means performance differs by age group, as shown above.
+
+---
+
+# Part 2 models: which blood tests? (`models/part2/`)
+
+| | Diabetes model (`diabetes.joblib`) | Kidney model (`ckd.joblib`) |
+|---|---|---|
+| Predicts | Undiagnosed diabetes (HbA1c ≥ 6.5 %) in adults never told they have diabetes | Undiagnosed CKD markers (eGFR < 60 or urine ACR ≥ 30 mg/g) in adults never told they have kidney disease |
+| Algorithm | Median imputation → standardisation → logistic regression | Histogram gradient boosting (handles missing values natively) |
+| Inputs | Age, sex, BMI, waist, measured systolic and diastolic BP, told high BP, BP medication, family history of diabetes, gestational diabetes, current smoking, physical activity, heart disease or stroke | Same, plus diagnosed diabetes |
+| Not an input | Race/ethnicity (used only to check fairness) | Same |
+| Training data | NHANES 2007–2014, 18,630 adults (697 cases) | NHANES 2007–2014, 20,326 adults (3,440 cases) |
+| Standard threshold | 0.030 (refers about as many people as the CDC/ADA score) | 0.100 (refers about as many as the KDIGO groups) |
+| Main inputs | Age (0.65 log-odds per SD), waist (0.40), family history (0.30), BMI (0.26), systolic BP (0.21) | Age, then systolic BP and diagnosed diabetes (permutation importance) |
+
+## Intended use
+A teaching and research demonstration of choosing **which blood tests** to order after a routine visit. **Not for clinical use.**
+In the app, **only the kidney model decides a referral.** For HbA1c the app uses the official CDC/ADA score, because the diabetes model was not
+better (below).
+
+## Performance (one evaluation on NHANES 2015–2018)
+| | Diabetes model | Kidney model |
+|---|---|---|
+| vs official tool, cases caught at its referral rate | −0.3 points vs CDC/ADA (95 % CI −4.2 to +3.6) | **+2.5 points vs KDIGO (+1.0 to +4.0)** |
+| ROC-AUC (official tool) | 0.763 (0.751) | 0.788 (0.683) |
+| Mean predicted vs observed | 4.3 % vs 4.0 % | 18.1 % vs 17.0 % |
+
+## Known limitations and risks
+- **Ethnicity miscalibration (diabetes model):** for non-Hispanic Asian adults it predicts 2.1 % risk where 5.1 % had undiagnosed diabetes, and it
+  catches 61 % of their cases vs the CDC/ADA score's 72 %. For non-Hispanic White adults it overestimates (4.9 % vs 2.2 %).
+- **Age:** both kidney tools catch few cases under 40 (model 27 %, KDIGO 32 %). For diabetes, the model catches far more cases under 40 than
+  the CDC/ADA score (64 % vs 33 %), but fewer at 60+ (91 % vs 97 %).
+- **Single measurements:** the kidney target uses one blood and one urine test, while CKD requires abnormalities lasting 3 months.
+- **US data only;** the thresholds shift slightly as the population ages (both models referred a few points more people in 2015–2018).

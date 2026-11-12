@@ -42,10 +42,11 @@ def albumin_creatinine_ratio(albumin_mg_l, creatinine_mg_dl):
     return np.asarray(albumin_mg_l, dtype=float) / np.asarray(creatinine_mg_dl, dtype=float) * 100
 
 
-def cdc_ada_risk_score(age, male, gestational_diabetes, family_history, told_high_bp, physically_active, bmi, asian):
-    """CDC/ADA Prediabetes Risk Test points (cdc.gov 'How Your Test is Scored'). High risk = 5 or more.
+def cdc_ada_points(age, male, gestational_diabetes, family_history, told_high_bp, physically_active, bmi, asian):
+    """Points per item of the CDC/ADA Prediabetes Risk Test (cdc.gov 'How Your Test is Scored').
 
-    A missing answer scores 0 points for that item (documented in the Part 2 plan change log).
+    Returns a DataFrame with one column per item. A missing answer scores 0 points for that item
+    (documented in the Part 2 plan change log).
     """
     def yes(x):
         # as int: adding boolean arrays would give logical OR, not a count of points
@@ -54,11 +55,20 @@ def cdc_ada_risk_score(age, male, gestational_diabetes, family_history, told_hig
     age = np.asarray(age, dtype=float)
     bmi = np.asarray(bmi, dtype=float)
     low = np.where(np.asarray(asian, dtype=bool), 23, 25)          # Asian cut-off for the first band
-    points = np.select([age >= 60, age >= 50, age >= 40], [3, 2, 1], 0)
-    points += yes(male) + yes(gestational_diabetes) + yes(family_history) + yes(told_high_bp)
-    points += (pd.Series(physically_active) == 0).to_numpy().astype(int)  # not active = 1 point
-    points += np.select([bmi >= 40, bmi >= 30, bmi >= low], [3, 2, 1], 0)  # NaN BMI -> 0 points
-    return points
+    return pd.DataFrame({
+        "Age": np.select([age >= 60, age >= 50, age >= 40], [3, 2, 1], 0),
+        "Man": yes(male),
+        "Gestational diabetes": yes(gestational_diabetes),
+        "Family history": yes(family_history),
+        "High blood pressure": yes(told_high_bp),
+        "Not physically active": (pd.Series(physically_active) == 0).to_numpy().astype(int),
+        "BMI": np.select([bmi >= 40, bmi >= 30, bmi >= low], [3, 2, 1], 0),   # NaN BMI -> 0 points
+    })
+
+
+def cdc_ada_risk_score(*args, **kwargs):
+    """Total CDC/ADA risk score (same arguments as cdc_ada_points). High risk = 5 or more."""
+    return cdc_ada_points(*args, **kwargs).sum(axis=1).to_numpy()
 
 
 # ---------------------------------------------------------------- download and build

@@ -1,15 +1,31 @@
-# SugarSieve: who should get a glucose test?
+# SugarSieve: who needs which blood test?
 
 [![tests](https://github.com/deepanshi-code/SugarSieve/actions/workflows/tests.yml/badge.svg)](https://github.com/deepanshi-code/SugarSieve/actions/workflows/tests.yml)
 
-*Screening works like a sieve: it filters out who needs the full test. SugarSieve checks how well quick measurements do that job.*
+*Screening works like a sieve: it filters out who needs the full test. SugarSieve checks how well routine clinic information does that job,
+and compares it honestly with the official tools clinics already use.*
 
 **🔗 Live app: [sugarsieve.streamlit.app](https://sugarsieve.streamlit.app/)**
 
-![SugarSieve app: input form](docs/images/app_input.jpg)
-![SugarSieve app: result with explanation](docs/images/app_result.jpg)
+## At a glance: two studies
 
-📄 **[Full report](docs/report.md)** · 🧾 **[Model card](docs/model_card.md)** · 🌍 **[External validation on 5,298 US women](notebooks/05_external_validation.ipynb)**
+| | **Part 2: one visit, three connected conditions** | **Part 1: who should get a glucose test?** |
+|---|---|---|
+| Question | After a routine visit, who needs an **HbA1c** test (diabetes) and who needs a **kidney panel** (CKD)? High blood pressure links the two. | Using quick measurements, who should be referred for a glucose tolerance test? |
+| Data | NHANES: 22,426 US adults (2007–2014) to train, 10,614 (2015–2018) to test once | Pima Indians Diabetes (768 women), then validated on 5,298 NHANES women |
+| Baselines | Official **CDC/ADA risk test** and **KDIGO 2024** priority groups | Age-and-BMI rule based on USPSTF 2021 |
+| Main result | **Kidney model beats KDIGO** (+2.5 points of cases caught, 95 % CI +1.0 to +4.0). **For diabetes, the CDC/ADA questionnaire is as good as a model.** The race-blind diabetes model underestimates risk for Asian American adults. | No better than the rule on Pima; modestly better on NHANES; probabilities needed recalibration in a new population |
+| Read more | [Report](docs/part2_report.md) · [Plan](docs/part2_plan.md) · notebooks 10–12 | [Report](docs/report.md) · [Model card](docs/model_card.md) · notebooks 01–06 |
+
+![Part 2 app: inputs](docs/images/part2_input.jpg)
+![Part 2 app: suggested tests](docs/images/part2_result.jpg)
+
+Every study here sets its success criteria **before** looking at results. The plans, and every later change, are committed to git so the order
+can be checked. Negative results are reported, not hidden.
+
+---
+
+# Part 1: who should get a glucose test? (Pima)
 
 ## The question
 Type 2 diabetes is confirmed with an **oral glucose tolerance test (OGTT)**: fasting, a glucose drink, a 2-hour wait and a blood draw.
@@ -61,7 +77,7 @@ and on an independent NHANES population with a plan committed before outcomes we
 - [x] **Stage 5:** [final report](docs/report.md): results, limitations, and what real use would need
 - [x] **External validation** on NHANES with a pre-registered plan, a [model card](docs/model_card.md), and automated tests on GitHub
 
-### Part 2 (in progress): one visit, three connected conditions
+### Part 2: one visit, three connected conditions
 Extends the project from diabetes alone to **diabetes, high blood pressure and chronic kidney disease**, using NHANES 2007–2018: *after one
 routine visit, who needs an HbA1c test, and who needs a kidney panel?* Baselines are the official CDC/ADA risk test and the KDIGO 2024
 priority groups. Training uses 2007–2014, testing uses 2015–2018. Plan written before results: [docs/part2_plan.md](docs/part2_plan.md).
@@ -83,13 +99,15 @@ priority groups. Training uses 2007–2014, testing uses 2015–2018. Plan writt
 
   **Fairness finding:** the race-blind diabetes model underestimates risk for Asian American adults (2.1 % predicted vs 5.1 % observed) and catches
   fewer of their cases than the CDC/ADA score, which uses lower BMI cut-offs for them.
-- [ ] **Stage 5:** app update and report
+- [x] **Stage 5:** app page "Which blood tests?" and the [Part 2 report](docs/part2_report.md)
 
 ## Project structure
 ```
 ├── docs/problem_definition.md   # problem, user, baselines, success criteria
 ├── docs/report.md               # final report
-├── docs/model_card.md           # intended use, data, performance, limits
+├── docs/model_card.md           # intended use, data, performance, limits (both parts)
+├── docs/part2_plan.md           # Part 2 pre-registered plan and change log
+├── docs/part2_report.md         # Part 2 final report
 ├── docs/external_validation_plan.md   # written before NHANES outcomes were examined
 ├── data/raw/pima_diabetes.csv   # unchanged copy from OpenML
 ├── data/external/nhanes_validation.csv  # processed NHANES validation set (Part 1)
@@ -102,7 +120,9 @@ priority groups. Training uses 2007–2014, testing uses 2015–2018. Plan writt
 ├── src/part2_data.py            # Part 2: NHANES 2007–2018 inputs, targets (eGFR, ACR, HbA1c), CDC/ADA and KDIGO baselines
 ├── src/part2_models.py          # Part 2: cluster-aware CV, leak-free diabetes→kidney chain, fold metrics
 ├── src/part2_eval.py            # Part 2: survey-design (Rao–Wu) bootstrap for confidence intervals
-├── app.py                       # Streamlit app
+├── src/part2_predict.py         # Part 2 app logic: CDC/ADA score for HbA1c, kidney model for the kidney panel
+├── app.py                       # Streamlit entry point (two pages)
+├── app_pages/                   # part2.py (Which blood tests?) and part1.py (Glucose test referral)
 ├── tests/                       # unit tests (run automatically by GitHub Actions)
 ├── models/                      # saved models, metadata.json, and coefficients.json (version-independent copy)
 │   └── part2/                   # Part 2 diabetes and kidney models + metadata.json
@@ -133,7 +153,8 @@ python -m src.part2_data              # optional: download Part 2 NHANES files a
 ```
 
 ## The app
-A referral aid with two modes:
+The app has two pages: **Which blood tests?** (Part 2, the default; see the [Part 2 report](docs/part2_report.md)) and
+**Glucose test referral (Part 1)**, described here. The Part 1 page is a referral aid with two modes:
 - **Quick measurements only:** should this patient be referred for a glucose tolerance test?
 - **Lab results available:** should this patient be flagged for clinical follow-up?
 
