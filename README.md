@@ -61,6 +61,16 @@ and on an independent NHANES population with a plan committed before outcomes we
 - [x] **Stage 5:** [final report](docs/report.md): results, limitations, and what real use would need
 - [x] **External validation** on NHANES with a pre-registered plan, a [model card](docs/model_card.md), and automated tests on GitHub
 
+### Part 2 (in progress): one visit, three connected conditions
+Extends the project from diabetes alone to **diabetes, high blood pressure and chronic kidney disease**, using NHANES 2007–2018: *after one
+routine visit, who needs an HbA1c test, and who needs a kidney panel?* Baselines are the official CDC/ADA risk test and the KDIGO 2024
+priority groups. Training uses 2007–2014, testing uses 2015–2018. Plan written before results: [docs/part2_plan.md](docs/part2_plan.md).
+- [x] **Stage 1:** problem definition, verified baselines and formulas, pre-registered plan
+- [ ] **Stage 2:** data pipeline and audit
+- [ ] **Stage 3:** modelling (training years only)
+- [ ] **Stage 4:** temporal test, interconnection and fairness analyses
+- [ ] **Stage 5:** app update and report
+
 ## Project structure
 ```
 ├── docs/problem_definition.md   # problem, user, baselines, success criteria
