@@ -42,8 +42,10 @@ st.caption("The original Part 1 study, trained on Pima women. For the newer, bro
 st.write("Should this patient be referred for an **oral glucose tolerance test**? Enter quick measurements to get a "
          "referral suggestion with the reasons behind it. If test results are already available, switch to "
          "*Lab results available* to check whether the patient should be flagged for follow-up.")
-st.warning("**Decision support only, not a diagnosis.** The model was built on a single, specific population and "
-           "has not been validated elsewhere. Always use clinical judgement.", icon="⚠️")
+st.warning("**Decision support only, not a diagnosis.** The model was trained on Pima women from the 1980s. On US women "
+           "(NHANES 2005–2016) it still ranked people well, but its **percentages were about 4× too high**, because "
+           "diabetes was far less common there. Read the referral suggestion and risk band, not the exact percentage. "
+           "Always use clinical judgement.", icon="⚠️")
 
 tab_assess, tab_about = st.tabs(["Assessment", "About & evidence"])
 

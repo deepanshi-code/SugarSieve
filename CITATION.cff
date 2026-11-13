@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this project, please cite it as below."
+title: "SugarSieve: who needs which blood test? Screening-referral models for diabetes and chronic kidney disease, compared with official guidelines"
+authors:
+  - family-names: Agarwal
+    given-names: Deepanshi
+version: 1.0.0
+date-released: 2026-11-13
+license: MIT
+repository-code: "https://github.com/deepanshi-code/SugarSieve"
+url: "https://sugarsieve.streamlit.app/"
+keywords:
+  - diabetes
+  - chronic kidney disease
+  - screening
+  - NHANES
+  - machine learning
+  - fairness
